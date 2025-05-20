@@ -52,7 +52,7 @@ function addWork() {
     work = prompt('введите задачу')
 
     //добавим проверку на пустоту
-    if (work == "") {
+    if (work == "" || work == null) {
         alert('Введите задачу')
         return
     }
