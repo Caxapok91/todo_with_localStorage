@@ -11,7 +11,7 @@ html {
 }
 body { /* Добавим базовый фон и шрифт */
     font-family: sans-serif; /* Выберите подходящий шрифт */
-    background-color: #f4f7f6; /* Легкий фон для всей страницы */
+    /*background-color: #f4f7f6;*/
     color: #333333;
     line-height: 1.6; /* Улучшает читаемость */
     display: flex;

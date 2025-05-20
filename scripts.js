@@ -2,12 +2,16 @@ const listUl = document.getElementById("listWork");
 const themeButton = document.getElementById("themeButton");
 const inputTask = document.getElementById('input-text');
 let data = JSON.parse(localStorage.getItem('work'))
+let task = JSON.parse(localStorage.getItem('task')) || [] //если нет, то пустой массив
 let nextTaskId;
 //Переделайте проект, использовав localStorage для хранения данных
 //---Рассказать про localStorage и Json,как очищать память, работа с обьектами
 //реализовать хранение данных о выполненных задачах
 
-
+let theme = localStorage.getItem('theme')
+if (theme == "dark") {
+    document.body.classList.add('dark-theme');
+}
 
 /*
 inputTask.addEventListener('keypress', function(event) {
@@ -18,20 +22,16 @@ inputTask.addEventListener('keypress', function(event) {
 
 */
 function showTaskInLocalStorage(){
-       
-    
-    if (data===null || Object.keys(data).length==0) {
-        console.log('Пустой')
-        data={}
-        nextTaskId=0;
-    }
-    else{
-        for(key in data){
-
-            createElementWithWork(key,data[key].task)
-            nextTaskId=key;
+    if (task.length>0){
+        for(let i=0;i<task.length;i++){
+            createElementWithWork(i+1,task[i].task)
         }
-}
+    }else{
+        console.log('таск Пустой')
+
+    }
+    
+
 
 }
 
@@ -60,13 +60,15 @@ function addWork() {
         task:work,
         flag:false
     }
-    nextTaskId++;
-    data[nextTaskId]=objTask;
 
-    console.log(data)
-    localStorage.setItem(`work`,JSON.stringify(data))
+    task.push(objTask)
+    let index = task.length
+
+    console.log(task)
     
-    createElementWithWork(nextTaskId,work)
+    localStorage.setItem(`task`,JSON.stringify(task))
+    
+    createElementWithWork(index,work)
 
     
     
@@ -82,8 +84,8 @@ function createElementWithWork(numberWork,work){
 
     const spanElem = document.createElement("span");
     spanElem.textContent = numberWork + " " + work;
-    if(data!==null){
-        if (data[numberWork].flag){
+    if(task!==null){
+        if (task[numberWork-1].flag){
         spanElem.classList.toggle("done")
     }
 
@@ -97,10 +99,12 @@ function createElementWithWork(numberWork,work){
     //удаление
     buttonDel.addEventListener('click',function(){
       
-        delete data[numberWork]
+       
+        task.splice(numberWork-1,1)//удаляем из массива
         listUl.removeChild(liElem)
-        localStorage.setItem('work',JSON.stringify(data));
-
+        
+        localStorage.setItem('task',JSON.stringify(task));
+        location.reload();
     })
     //Выполнение
     const buttonDon = document.createElement("button");
@@ -108,8 +112,13 @@ function createElementWithWork(numberWork,work){
     buttonDon.addEventListener('click',function(){
         //complElem(numberWork)
         spanElem.classList.toggle("done")
-        data[numberWork].flag = true
-        localStorage.setItem('work',JSON.stringify(data));
+        task[numberWork-1].flag=!task[numberWork-1].flag //меняем флаг в массиве
+
+        
+       
+        localStorage.setItem('task',JSON.stringify(task));  //обновляем массив в localStorage
+        
+        
 
         
     })
@@ -127,6 +136,9 @@ function createElementWithWork(numberWork,work){
 function toggleTheme() {
     document.body.classList.toggle('dark-theme');
     themeButton.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+    theme = (theme === 'light' || theme == null) ? 'dark' : 'light';
+    localStorage.setItem('theme', theme);
+   
 }
 
 
